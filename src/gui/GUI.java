@@ -76,11 +76,14 @@ public class GUI extends Application {
 		GridPane.setConstraints(anzahlField, 0, 1);
 		grid.getChildren().add(anzahlField);
 		Button okayButton = new Button("Okay");
+		Label rueckmeldung = new Label("");
+		grid.getChildren().add(rueckmeldung);
+		GridPane.setConstraints(rueckmeldung, 0, 2);
 		okayButton.setOnAction(new EventHandler<ActionEvent>() {
 @Override
     public void handle(ActionEvent e) {
-				if ((beschreibung.getText() != null && !beschreibung.getText().isEmpty())) {
-					String ziffern = beschreibung.getText();
+				if ((anzahlField.getText() != null && !anzahlField.getText().isEmpty())) {
+					String ziffern = anzahlField.getText();
 					int ziffer;
 					boolean korrekteEingabe = true;
 					for (int i = 0; i < ziffern.length(); i++) {
@@ -90,11 +93,12 @@ public class GUI extends Application {
 							break;
 						}
 					}
-					if (korrekteEingabe) {
+					if (korrekteEingabe && Integer.parseInt(ziffern) < 10000000) {
 						int anzahl = Integer.parseInt(ziffern);
 						controller.starte(anzahl);
 					} else {
-
+						System.out.println("1");
+						rueckmeldung.setText("Die Anzahl sollte aus Ziffern bestehen.\n N > 0 && N < 10 000 000");
 					}
 				}
 			}

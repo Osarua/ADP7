@@ -16,10 +16,10 @@ public class Buffer {
 	
 	private final static int BUFFERSIZE = 10; 
 	
-	private int freiePlaetze = 0;
+	private int freiePlaetze;
 	
 	public Buffer() {
-		buffer = new String[10];
+		buffer = new String[BUFFERSIZE];
 		leseKopf = -1;
 		schreibKopf = 0;
 		freiePlaetze = BUFFERSIZE;
@@ -30,18 +30,18 @@ public class Buffer {
 	 * @return String eines Web-Log Eintrag 
 	 */
 	public synchronized String lese() {
-		while(freiePlaetze == BUFFERSIZE) {
+		while(istBufferLeer()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		leseKopf++;
-		if(leseKopf > BUFFERSIZE) {
+		if(leseKopf >= BUFFERSIZE-1) {
 			leseKopf = -1;
 		}
-		freiePlaetze++;
+		leseKopf = leseKopf + 1;
+		freiePlaetze = freiePlaetze + 1;
 		notifyAll();
 		return buffer[leseKopf];
 	}
@@ -60,10 +60,18 @@ public class Buffer {
 		}
 		buffer[schreibKopf] = eintrag;
 		schreibKopf++;
-		if(schreibKopf > BUFFERSIZE) {
+		if(schreibKopf >= BUFFERSIZE) {
 			schreibKopf = 0;
 		}
-		freiePlaetze++;
+		freiePlaetze = freiePlaetze - 1;
 		notifyAll();
+	}
+
+	public boolean istBufferLeer() {
+		boolean result = false;
+		if (freiePlaetze == BUFFERSIZE) {
+			result = true;
+		}
+		return result;
 	}
 }
