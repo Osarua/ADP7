@@ -1,5 +1,10 @@
 package geteilt;
-
+/**
+ * TI3 ADP, SS16 
+ * Gruppe: Julian Magierski (julian.magierski@haw-hamburg.de)
+ * Kristian Exﬂ (kristian.exss@haw-hamburg) 
+ * Aufgabenblatt 7: Hashfunktionen
+ */
 
 public class Buffer {
 
@@ -20,7 +25,11 @@ public class Buffer {
 		freiePlaetze = BUFFERSIZE;
 	}
 	
-	public String lese() {
+	/**
+	 * Die Methode liest einen String aus dem Buffer. 
+	 * @return String eines Web-Log Eintrag 
+	 */
+	public synchronized String lese() {
 		while(freiePlaetze == BUFFERSIZE) {
 			try {
 				wait();
@@ -37,7 +46,11 @@ public class Buffer {
 		return buffer[leseKopf];
 	}
 	
-	public void schreibe(String eintrag) {
+	/**
+	 * Schreibt einen String in den Buffer.
+	 * @param String der in den Buffer geschrieben werden soll.
+	 */
+	public synchronized void schreibe(String eintrag) {
 		while(freiePlaetze == 0) {
 			try {
 				wait();

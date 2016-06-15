@@ -1,13 +1,23 @@
 package erzeugung;
-
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
-
+/**
+ * TI3 ADP, SS16 
+ * Gruppe: Julian Magierski (julian.magierski@haw-hamburg.de)
+ * Kristian Exß (kristian.exss@haw-hamburg) 
+ * Aufgabenblatt 7: Hashfunktionen
+ */
 public class Datenerzeugung {
-	public static void weblogErstellen (int anzahlPar, String dateinamePar, File ortPar) throws IOException {
+	
+	String dateiname;
+	
+	public Datenerzeugung(String dateinamePar) {
+		dateiname = dateinamePar;
+	}
+	
+	public void weblogErstellen (int anzahlPar) throws IOException {
 		LinkedList<String> fifo = new LinkedList<String> ();
 		String [] namen = {"Hans","Peter","Sigmar","Gabriel","Jürgen","Boris","Jesus","Max","Christopfer","Reichshauptweltkomplex"};
 		String [] verb = {" hat "," singt "," reinigt "," dreht "," zeichnet "," befiehlt "," kontrolliert "," bewundert "," operiert "," sieht "};
@@ -18,7 +28,7 @@ public class Datenerzeugung {
 			int vierte = zahlErzeugenOhneNull()*10+zahlErzeugen();
 			fifo.addLast(erste+"."+zweite+"."+dritte+"."+vierte+";"+namen[zahlErzeugen()]+verb[zahlErzeugen()]+namen[zahlErzeugen()]);
 		}
-		BufferedWriter writer = new BufferedWriter(new FileWriter (dateinamePar)); 
+		BufferedWriter writer = new BufferedWriter(new FileWriter (dateiname)); 
 		while (fifo.size()!=0) {
 			writer.write(fifo.pop());
 			writer.newLine();
