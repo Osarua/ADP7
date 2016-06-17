@@ -80,8 +80,8 @@ public class GUI extends Application {
 		grid.getChildren().add(rueckmeldung);
 		GridPane.setConstraints(rueckmeldung, 0, 2);
 		okayButton.setOnAction(new EventHandler<ActionEvent>() {
-@Override
-    public void handle(ActionEvent e) {
+			@Override
+			public void handle(ActionEvent e) {
 				if ((anzahlField.getText() != null && !anzahlField.getText().isEmpty())) {
 					String ziffern = anzahlField.getText();
 					int ziffer;
@@ -93,17 +93,19 @@ public class GUI extends Application {
 							break;
 						}
 					}
-					if (korrekteEingabe && Integer.parseInt(ziffern) < 10000000) {
-						int anzahl = Integer.parseInt(ziffern);
+					int anzahl = Integer.parseInt(ziffern);
+					if (anzahl > 10000000 && anzahl <= 0) {
+						korrekteEingabe = false;
+					}
+					if (korrekteEingabe) {
 						controller.starte(anzahl);
 					} else {
 						System.out.println("1");
-						rueckmeldung.setText("Die Anzahl sollte aus Ziffern bestehen.\n N > 0 && N < 10 000 000");
+						rueckmeldung.setText("Die Anzahl sollte aus Ziffern bestehen.\n N > 0 && N <= 10 000 000");
 					}
 				}
 			}
 		});
-
 		GridPane.setConstraints(okayButton, 1, 1);
 		grid.getChildren().add(okayButton);
 		grid.setAlignment(Pos.CENTER);
@@ -113,7 +115,7 @@ public class GUI extends Application {
 	private void mainWindow () {
 		BorderPane borderPane = new BorderPane();
 		ipAdressen = FXCollections.observableArrayList();
-		TableView ipTabelle = new TableView ();
+		TableView<?> ipTabelle = new TableView ();
 		ipTabelle.setItems(ipAdressen);
 		TableColumn ipColumn = new TableColumn ("IP Adressen");
 		ipTabelle.getColumns().add(ipColumn);
