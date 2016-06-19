@@ -43,7 +43,7 @@ public class Controller {
 			while(!buffer.istBufferLeer()){
 				line = buffer.lese();
 			log = line.split(";");
-			hashtabelle.hash(log[0], log[1]);
+			hashtabelle.einfuegenHashtabelle(log[0], log[1]);
 			}
 		}
 	}
