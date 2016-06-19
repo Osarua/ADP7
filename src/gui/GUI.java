@@ -1,6 +1,8 @@
 package gui;
 
 import geteilt.Controller;
+import geteilt.Hashtabelle;
+import geteilt.Ip;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,11 +17,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
 /**
  * TI3 ADP, SS16 
  * Gruppe: Julian Magierski (julian.magierski@haw-hamburg.de)
@@ -33,16 +35,16 @@ public class GUI extends Application {
 	
 	private BorderPane pane;
 	
-	private ObservableList<?> ipAdressen;
-	
 	private int width;
 	
 	private int heigth;
 	
 	private Controller controller;
-
+	
+	private Hashtabelle hashtabelle;
 	public GUI (Stage primaryStagePar) {
-		controller = new Controller(); 
+		 hashtabelle = new Hashtabelle();
+		controller = new Controller(hashtabelle); 
 		width = 800;
 		heigth = 600;
 		try {
@@ -93,12 +95,14 @@ public class GUI extends Application {
 							break;
 						}
 					}
-					int anzahl = Integer.parseInt(ziffern);
-					if (anzahl > 10000000 && anzahl <= 0) {
-						korrekteEingabe = false;
-					}
 					if (korrekteEingabe) {
+						int anzahl = Integer.parseInt(ziffern);
+						if (anzahl > 10000000 && anzahl <= 0) {
+							korrekteEingabe = false;
+						} else {
 						controller.starte(anzahl);
+						mainWindow();
+						}
 					} else {
 						System.out.println("1");
 						rueckmeldung.setText("Die Anzahl sollte aus Ziffern bestehen.\n N > 0 && N <= 10 000 000");
@@ -113,21 +117,19 @@ public class GUI extends Application {
 	}
 	
 	private void mainWindow () {
+		pane.getChildren().clear();
 		BorderPane borderPane = new BorderPane();
-		ipAdressen = FXCollections.observableArrayList();
-		TableView<?> ipTabelle = new TableView ();
-		ipTabelle.setItems(ipAdressen);
-		TableColumn ipColumn = new TableColumn ("IP Adressen");
-		ipTabelle.getColumns().add(ipColumn);
-		borderPane.setLeft(ipTabelle);
-		
-		TextArea informationen = new TextArea ();
-		informationen.setText("Sehr geehrter Benutzer vielen Dank \n"
-				+ "dass sie sich für dieses Produkt entschieden haben \n"
-				+ "um alle Features nutzen zu können geben sie bitte ihre Kontonummer und PIN an \n"
-				+ "vielen Dank");
-		informationen.setEditable(false);
-		borderPane.setRight(informationen);
+		final ObservableList<Ip> ipAdressen = 
+				FXCollections.observableArrayList(hashtabelle.getIpAddressen());
+		TableView<Ip> tableView = new TableView <>();
+		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);	
+	    TableColumn<Ip, String> ipColumn = new TableColumn<>("IP Adressen");
+	    ipColumn.setCellValueFactory(new PropertyValueFactory<Ip, String>("ip"));
+	    ipColumn.setMinWidth(400);
+	    tableView.setItems(ipAdressen);
+	    tableView.getColumns().add(ipColumn);
+		borderPane.setLeft(tableView);
+		pane.setCenter(borderPane);
 	}
 	
 	

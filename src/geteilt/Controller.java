@@ -21,10 +21,13 @@ public class Controller {
 	
 	private Lesen einlesen;
 	
-	public Controller() {
+	private Hashtabelle hashtabelle;
+	
+	public Controller(Hashtabelle hashtabellePar) {
 		buffer = new Buffer();
 		erzeugung = new Datenerzeugung("weblogs.txt");
 		einlesen = new Lesen("weblogs.txt", buffer);
+		hashtabelle = hashtabellePar;
 	}
 	
 	public void starte(int anzahl) {
@@ -35,11 +38,12 @@ public class Controller {
 		}
 		einlesen.start();
 		String line = null;
+		String[] log;
 		while(einlesen.isAlive()) {
 			while(!buffer.istBufferLeer()){
 				line = buffer.lese();
-				System.out.printf("CONTROLLER: %s\n",line);
-			// Hashen
+			log = line.split(";");
+			hashtabelle.hash(log[0], log[1]);
 			}
 		}
 	}
