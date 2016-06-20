@@ -103,6 +103,8 @@ public class GUI extends Application {
 						if (anzahl > 10000000 && anzahl <= 0) {
 							korrekteEingabe = false;
 						} else {
+						
+						rueckmeldung.setText("Bitte warten..");
 						controller.starte(anzahl);
 						mainWindow();
 						}
@@ -131,25 +133,24 @@ public class GUI extends Application {
 	   ipColumn.setMinWidth(100);
 	    tableView.setItems(ipAdressen);
 	    tableView.getColumns().add(ipColumn);
+	    
+	    TableView<Log> tableViewLogs = new TableView<>();
+		tableViewLogs
+				.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+		TableColumn<Log, String> logsColumn = new TableColumn<>(
+				"Logs");
+		logsColumn.setMinWidth(400);
+		logsColumn.setCellValueFactory(new PropertyValueFactory<Log, String>(
+						"logEintrag"));
+						tableViewLogs.getColumns().add(logsColumn);
+		borderPane.setCenter(tableViewLogs);
 	    tableView.setOnMousePressed(new EventHandler<MouseEvent>() {
 	        @Override 
 	        public void handle(MouseEvent event) {
 				if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-					String iP = tableView.getSelectionModel().getSelectedItem()
-							.getIp();
-					final ObservableList<Log> logs = FXCollections
-							.observableArrayList(hashtabelle.suchen(iP));
-					TableView<Log> tableViewLogs = new TableView<>();
-					tableViewLogs
-							.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-					TableColumn<Log, String> logsColumn = new TableColumn<>(
-							"Logs");
-					logsColumn.setMinWidth(700);
-					logsColumn.setCellValueFactory(new PropertyValueFactory<Log, String>(
-									"logEintrag"));
+					String iP = tableView.getSelectionModel().getSelectedItem().getIp();
+					final ObservableList<Log> logs = FXCollections.observableArrayList(hashtabelle.suchen(iP));
 					tableViewLogs.setItems(logs);
-					tableViewLogs.getColumns().add(logsColumn);
-	borderPane.setCenter(tableViewLogs);
 	            }
 	        }
 	    });

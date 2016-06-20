@@ -58,7 +58,13 @@ public class Hashtabelle {
 	}
 	
 	private int hashwert(long wert, int j){
-		int hashWert = (int)((wert + j) % ht.length);
+		int hashWert = 0;
+		if (j==0) {
+			hashWert = (int) (wert % ht.length);
+		}
+		else {
+			hashWert = (int) ((j + wert) % (ht.length-1));
+		}
 		return hashWert;
 	}
 	
@@ -73,10 +79,10 @@ public class Hashtabelle {
 		ipAddressen.clear();
 		for (int i = 0; i < htAlt.length; i++) {
 			if(htAlt[i].getStatus() == Status.BELEGT) {
-			//	List<String> logs = htAlt[i].getLogs();;
-				//for(int j = 0; j < logs.size(); j++) {
-				einfuegenHashtabelle(htAlt[i].getwert(),"");
-				//}
+				List<Log> logs = htAlt[i].getLogs();
+				for(int j = 0; j < logs.size(); j++) {
+				einfuegenHashtabelle(htAlt[i].getwert(),logs.get(j).getLogEintrag());
+				}
 			}
 		}
 	}
