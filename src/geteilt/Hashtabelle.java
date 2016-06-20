@@ -6,8 +6,6 @@ import java.util.List;
 
 public class Hashtabelle {
 	
-	private enum Status {FREI, BELEGT};
-	
 	private Element[] ht;
 	
 	private List<Ip> ipAddressen;
@@ -17,7 +15,7 @@ public class Hashtabelle {
 	public Hashtabelle() {
 		ht = new Element[15];
 		for (int i = 0; i <ht.length;i++) {
-			ht[i] = new Element("", "", Status.FREI);
+			ht[i] = new Element("", Status.FREI);
 		}
 		ipAddressen = new ArrayList<>();
 		anzahl = 0;
@@ -25,37 +23,38 @@ public class Hashtabelle {
 	}
 	
 	public void einfuegenHashtabelle (String iP, String log) {
-		String iPLong = iP.replace(".", "");
 		int j = 0;
-		long hashcode = Long.parseLong(iPLong);
+		long hashcode = berechneHashcode(iP);
 		int i = hashwert(hashcode, j);
 		int index = i;
 		while (!(ht[i].getwert().equals(iP)) && ht[i].getStatus() != Status.FREI ) {
 			j = j + 1;
 			i = hashwert(hashcode, j);
-			//System.out.printf("i: %d \n", i);
 			if(ht[i].getStatus() != Status.BELEGT && ht[index].getStatus() == Status.BELEGT) {
 				index = i;
 			}
 		}
 		if(ht[i].equals(iP)){
-			//ht[i].logHinzu(log);
+			ht[i].logHinzu(log);
 		} else { 
 			if (ht[index].getStatus() == Status.FREI && anzahl > 0.8 * ht.length) {
-			System.out.print("zu viel\n");
 				rehash();
-			einfuegenHashtabelle(iP, log);
+				einfuegenHashtabelle(iP, log);
 		} else {
-			ipAddressen.add(new Ip(iP));
 			if (ht[index].getStatus() == Status.FREI) {
+				ipAddressen.add(new Ip(iP));
 			anzahl = anzahl + 1;
-			System.out.printf("Anzahl: %d\n",anzahl);
 			ht[index].setWert(iP);
 			ht[index].logHinzu(log);
 			ht[index].setStatus(Status.BELEGT);
 			}
 		}	
 		}
+	}
+	
+	private long berechneHashcode (String iP) {
+		String iPLong = iP.replace(".", "");
+		return Long.parseLong(iPLong);
 	}
 	
 	private int hashwert(long wert, int j){
@@ -68,7 +67,7 @@ public class Hashtabelle {
 		Element[] htAlt = ht;
 		ht = new Element[(int)(p*ht.length)];
 		for (int i = 0; i < ht.length; i++) {
-			ht[i] = new Element("","",Status.FREI);
+			ht[i] = new Element("",Status.FREI);
 		}
 		anzahl = 0;	
 		ipAddressen.clear();
@@ -82,54 +81,42 @@ public class Hashtabelle {
 		}
 	}
 	
-	public List getLogs (String iP) {
-		return null;
+	public List<Log> suchen (String iP) {
+		long hashcode = berechneHashcode(iP);
+		int j = 0;
+		int i = 0;
+		do {
+			i = hashwert(hashcode, j);
+			j = j + 1;
+		} while(ht[i].getwert().equals(iP) || ht[i].getStatus() == Status.FREI);
+		if (ht[i].getStatus() == Status.BELEGT) {
+			return ht[i].getLogs();
+		} else {
+			String meldung = "Keine Log Einträge gefunden";
+			List<Log> nichtGefunden = new LinkedList<>();
+			nichtGefunden.add(new Log(meldung));
+			return nichtGefunden;
+		}
+	}
+	
+	public boolean loeschen (String iP) {
+		int j = 0;
+		int i = 0;
+		long hashcode = berechneHashcode(iP);
+		do {
+			i = hashwert(hashcode, j);
+			j = j + 1;
+		} while(ht[i].getwert().equals(iP) || ht[i].getStatus() == Status.FREI);
+		if (ht[i].getStatus() == Status.BELEGT) {
+			ht[i].setStatus(Status.ENTFERNT);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public List<Ip> getIpAddressen () {
 		return ipAddressen;
-	}
-	
-	public class Element {
-
-		private String wert;
-
-		private List<String> logs;
-
-		private Status status;
-		
-		public Element(String wertPar, String log, Status statusPar) {
-			wert = wertPar;
-			logs = new LinkedList<>();
-			logs.add(log);
-			status = statusPar;
-			
-		}
-
-		public void logHinzu(String log) {
-			logs.add(log);
-		}
-
-		public String getwert() {
-			return wert;
-		}
-
-		public List<String> getLogs() {
-			return logs;
-		}
-		
-		public void setWert(String wert) {
-			this.wert = wert;
-		}
-
-		public void setStatus(Status status) {
-			this.status = status;
-		}
-
-		public Status getStatus() {
-			return status;
-		}
-
 	}
 	
 }

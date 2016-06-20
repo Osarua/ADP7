@@ -1,8 +1,10 @@
 package gui;
 
 import geteilt.Controller;
+import geteilt.Element;
 import geteilt.Hashtabelle;
 import geteilt.Ip;
+import geteilt.Log;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +20,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -125,9 +128,31 @@ public class GUI extends Application {
 		tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);	
 	    TableColumn<Ip, String> ipColumn = new TableColumn<>("IP Adressen");
 	    ipColumn.setCellValueFactory(new PropertyValueFactory<Ip, String>("ip"));
-	    ipColumn.setMinWidth(400);
+	   ipColumn.setMinWidth(100);
 	    tableView.setItems(ipAdressen);
 	    tableView.getColumns().add(ipColumn);
+	    tableView.setOnMousePressed(new EventHandler<MouseEvent>() {
+	        @Override 
+	        public void handle(MouseEvent event) {
+				if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
+					String iP = tableView.getSelectionModel().getSelectedItem()
+							.getIp();
+					final ObservableList<Log> logs = FXCollections
+							.observableArrayList(hashtabelle.suchen(iP));
+					TableView<Log> tableViewLogs = new TableView<>();
+					tableViewLogs
+							.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+					TableColumn<Log, String> logsColumn = new TableColumn<>(
+							"Logs");
+					logsColumn.setMinWidth(700);
+					logsColumn.setCellValueFactory(new PropertyValueFactory<Log, String>(
+									"logEintrag"));
+					tableViewLogs.setItems(logs);
+					tableViewLogs.getColumns().add(logsColumn);
+	borderPane.setCenter(tableViewLogs);
+	            }
+	        }
+	    });
 		borderPane.setLeft(tableView);
 		pane.setCenter(borderPane);
 	}
