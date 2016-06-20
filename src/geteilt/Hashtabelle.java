@@ -59,22 +59,18 @@ public class Hashtabelle {
 	}
 	
 	private int hashwert(long wert, int j){
-		int hashWert = ((int)(wert % ht.length)) + j;
-		if(hashWert >= ht.length || hashWert < 0) {
-			hashWert = 0;
-		}
+		int hashWert = (int)((wert + j) % ht.length);
 		return hashWert;
 	}
 	
 	private void rehash () {
-		float p = 5f;
+		float p = 1.5f;
 		Element[] htAlt = ht;
 		ht = new Element[(int)(p*ht.length)];
 		for (int i = 0; i < ht.length; i++) {
 			ht[i] = new Element("","",Status.FREI);
 		}
-		anzahl = 0;
-		
+		anzahl = 0;	
 		ipAddressen.clear();
 		for (int i = 0; i < htAlt.length; i++) {
 			if(htAlt[i].getStatus() == Status.BELEGT) {
