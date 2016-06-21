@@ -1,33 +1,33 @@
 package geteilt;
 
 
-
-import java.util.LinkedList;
-import java.util.List;
-
 public class Element {
 
 	private String wert;
 
-	private List<Log> logs;
+	private String logs;
 
 	private Status status;
 	
 	public Element(String wertPar, Status statusPar) {
 		wert = wertPar;
-		logs = new LinkedList<>();
+		logs = "";
 		status = statusPar;
 	}
 
 	public void logHinzu(String log) {
-		logs.add(new Log(log));
+		logs = logs + log + "\n";
 	}
 
 	public String getwert() {
 		return wert;
 	}
+	
+	public void setInitLog(String log) {
+		logs = log;
+	}
 
-	public List<Log> getLogs() {
+	public String getLogs() {
 		return logs;
 	}
 	

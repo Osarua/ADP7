@@ -1,7 +1,6 @@
 package geteilt;
-
+import java.io.File;
 import java.io.IOException;
-
 import einlesen.Lesen;
 import erzeugung.Datenerzeugung;
 
@@ -36,6 +35,15 @@ public class Controller {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		einlesen();
+	}
+	public void starte (File filePar) {
+		einlesen = new Lesen (filePar.getAbsolutePath(), buffer);
+		einlesen();
+		
+	}
+	
+	private void einlesen () {
 		einlesen.start();
 		String line = null;
 		String[] log;

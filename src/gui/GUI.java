@@ -1,10 +1,11 @@
 package gui;
 
+import java.io.File;
+
 import geteilt.Controller;
 import geteilt.Element;
 import geteilt.Hashtabelle;
 import geteilt.Ip;
-import geteilt.Log;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,13 +18,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 /**
  * TI3 ADP, SS16 
@@ -60,7 +60,7 @@ public class GUI extends Application {
 	@Override
 	public void start(Stage primaryStagePar) throws Exception {
 		primaryStage = primaryStagePar;
-		primaryStage.setTitle("Algorithmen und Datenstrukuren SS16: Hashfunktionen");
+		primaryStage.setTitle("Algorithmen und Datenstrukturen SS16: Hashfunktionen");
 		pane = new BorderPane();
 		primaryStage.setScene(new Scene (pane, width,heigth));
 		anzahlDerDaten();
@@ -109,14 +109,30 @@ public class GUI extends Application {
 						mainWindow();
 						}
 					} else {
-						System.out.println("1");
 						rueckmeldung.setText("Die Anzahl sollte aus Ziffern bestehen.\n N > 0 && N <= 10 000 000");
 					}
 				}
 			}
 		});
+		Button filechooserButton = new Button ("Öffne Datei");
+		filechooserButton.setOnAction(new EventHandler<ActionEvent> (){
+			@Override
+			public void handle(ActionEvent arg0) {
+				File file = new FileChooser().showOpenDialog(primaryStage);
+				if (file.getName().endsWith(".txt")) {
+					controller.starte(file);
+					mainWindow();
+				}
+				else {
+					rueckmeldung.setText("Datei hat falsche Dateiendung");
+				}
+			}
+			
+		});
 		GridPane.setConstraints(okayButton, 1, 1);
 		grid.getChildren().add(okayButton);
+		GridPane.setConstraints(filechooserButton, 1, 2);
+		grid.getChildren().add(filechooserButton);
 		grid.setAlignment(Pos.CENTER);
 		pane.setCenter(grid);
 	}
@@ -134,14 +150,14 @@ public class GUI extends Application {
 	    tableView.setItems(ipAdressen);
 	    tableView.getColumns().add(ipColumn);
 	    
-	    TableView<Log> tableViewLogs = new TableView<>();
+	    TableView<Element> tableViewLogs = new TableView<>();
 		tableViewLogs
 				.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-		TableColumn<Log, String> logsColumn = new TableColumn<>(
+		TableColumn<Element, String> logsColumn = new TableColumn<>(
 				"Logs");
 		logsColumn.setMinWidth(400);
-		logsColumn.setCellValueFactory(new PropertyValueFactory<Log, String>(
-						"logEintrag"));
+		logsColumn.setCellValueFactory(new PropertyValueFactory<Element, String>(
+						"logs"));
 						tableViewLogs.getColumns().add(logsColumn);
 		borderPane.setCenter(tableViewLogs);
 	    tableView.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -149,7 +165,7 @@ public class GUI extends Application {
 	        public void handle(MouseEvent event) {
 				if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
 					String iP = tableView.getSelectionModel().getSelectedItem().getIp();
-					final ObservableList<Log> logs = FXCollections.observableArrayList(hashtabelle.suchen(iP));
+					final ObservableList<Element> logs = FXCollections.observableArrayList(hashtabelle.suchen(iP));
 					tableViewLogs.setItems(logs);
 	            }
 	        }

@@ -1,9 +1,6 @@
 package einlesen;
 import java.io.File;
 import java.io.IOException;
-
-import com.sun.glass.ui.Pixels.Format;
-
 import java.io.FileReader;
 import java.io.BufferedReader;
 import geteilt.Buffer;
