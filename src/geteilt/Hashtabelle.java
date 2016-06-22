@@ -3,6 +3,7 @@ package geteilt;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Hashtabelle {
 	
 	private Element[] ht;
@@ -11,8 +12,18 @@ public class Hashtabelle {
 	
 	private int anzahl;
 	
+	private final int arraylaenge [] = {15,22, 33, 49, 73, 109, 163, 244, 366, 549, 823, 1234, 1851, 2776, 4164, 6246, 9369, 14053,
+			21079,31618, 47427, 71140, 106710, 160065, 240097, 360145, 540217, 810325, 1215487, 1823230, 2734845, 4102267, 6153400, 
+			9230100, 13845150};
+	private final int primzahlen[] = {13, 19 , 31 , 47, 73, 109, 163, 241, 359, 547, 823, 1231, 1847, 2767, 4159, 6229, 9349, 14051,
+			21067, 31607, 47419 ,71129 ,106703, 160049, 240089, 360091, 540217, 810319 , 1215463, 1823219 , 2734819,4102249 , 6153383, 
+			9230083 , 13845133};
+	
+	private int primzahlPos;
+	
 	public Hashtabelle() {
-		ht = new Element[15];
+		primzahlPos=0;
+		ht = new Element[arraylaenge[primzahlPos]];
 		for (int i = 0; i <ht.length;i++) {
 			ht[i] = new Element("", Status.FREI);
 		}
@@ -24,15 +35,15 @@ public class Hashtabelle {
 	public void einfuegenHashtabelle (String iP, String log) {
 		int j = 0;
 		long hashcode = berechneHashcode(iP);
-		int index = hashwert(hashcode, j);
+		int index = hashwert(hashcode, j, 0);
 		while (!(ht[index].getwert().equals(iP)) && ht[index].getStatus() != Status.FREI ) {
 			j = j + 1;
-			index = hashwert(hashcode, j);
+			index = hashwert(hashcode, j, index);
 		}
 		if(ht[index].getwert().equals(iP)){
 			ht[index].logHinzu(log);
 		} else { 
-			if (ht[index].getStatus() == Status.FREI && anzahl > 0.8 * ht.length) {
+			if (ht[index].getStatus() == Status.FREI && anzahl > 0.8 * primzahlen[primzahlPos]) {
 				rehash();
 				einfuegenHashtabelle(iP, log);
 		} else {
@@ -51,21 +62,24 @@ public class Hashtabelle {
 		return Long.parseLong(iPLong);
 	}
 	
-	private int hashwert(long wert, int j){
+	private int hashwert(long wert, int j, int index){
 		int hashWert = 0;
 		if (j==0) {
-			hashWert = (int) (wert % ht.length);
+			hashWert = (int) (wert % primzahlen[primzahlPos]);
 		}
 		else {
-			hashWert = (int) ((j + wert) % (ht.length-1));
+			hashWert = (index) %  (primzahlen[primzahlPos]-1) +1;
+			//hashWert = (int)((index * ((Math.sqrt(5)-1)/2)) % primzahlen[primzahlPos]);
+			
 		}
 		return hashWert;
 	}
 	
 	private void rehash () {
-		float p = 1.5f;
 		Element[] htAlt = ht;
-		ht = new Element[(int)(p*ht.length)];
+		primzahlPos++;
+		int laenge = arraylaenge[primzahlPos];
+		ht = new Element[laenge];
 		for (int i = 0; i < ht.length; i++) {
 			ht[i] = new Element("",Status.FREI);
 		}
@@ -85,7 +99,7 @@ public class Hashtabelle {
 		int j = 0;
 		int i = 0;
 		while (true) {
-			i = hashwert(hashcode, j);
+			i = hashwert(hashcode, j, i);
 			j = j + 1;
 			if (ht[i].getwert().equals(iP)|| ht[i].getStatus() == Status.FREI) {
 				break;
@@ -107,7 +121,7 @@ public class Hashtabelle {
 		int i = 0;
 		long hashcode = berechneHashcode(iP);
 		do {
-			i = hashwert(hashcode, j);
+			i = hashwert(hashcode, j,i);
 			j = j + 1;
 		} while(ht[i].getwert().equals(iP) || ht[i].getStatus() == Status.FREI);
 		if (ht[i].getStatus() == Status.BELEGT) {
